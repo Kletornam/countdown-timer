@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="index.js" async></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+</head>
+
+<body id="body">
+    <div id="main">
+        <div id="top">
+            <span>
+
+                <a class="text-3xl underline" style="color: rgb(56, 255, 162); text-decoration: none;"
+                    href="app.html">RESET </a>
+                ||
+                <a style="color: rgb(56, 255, 162); text-decoration: none;" id="resetBtn" href="#" onclick="showHide()">
+                    SHOW CLOCK
+                </a>
+                ||
+                <!-- <input type="textarea" id="words" onchange="displayMsg()" placeholder="Enter a message here" value=""> -->
+                <textarea name="message" id="words" cols="30" rows="1" onchange="displayMsg()"
+                    placeholder="Enter a message here"></textarea>
+                    ||
+                    <a style="color: rgb(56, 255, 162); text-decoration: none;" id="reset_Btn"
+                        onclick="showHideTop()">
+                        CLOCK ONLY
+                    </a>
+                    ||
+                    <a style="color: rgb(56, 255, 162); text-decoration: none;" id="reset_minus"
+                        onclick="showMinus()">
+                        SHOW MINUS
+                    </a>
+                    ||
+                    <a style="color: rgb(56, 255, 162); text-decoration: none;" id="hide_menu">
+                        HIDE
+                    </a>
+                    
+            </span>
+        </div>
+
+        <div id="menu">Menu</div>
+
+        <div id="sop">
+
+            <div id="countdown">
+                <form>
+                    <p><u>SET THE TIMER</u></p>
+                    <label for="minutes"> Minutes:</label>
+                    <input id="minute" placeholder="Enter number of minutes" value="00" /><br>
+                    <br>
+                    <label for="seconds">Seconds:</label>
+                    <input id="second" placeholder="Enter number of Seconds" value="0" /><br><br>
+                </form>
+
+                <button onclick="countDown()">Start</button>
+
+                <button id="showBtn" onclick="showHide()">Show Clock</button>
+            </div>
+
+            <div id="down">
+                00:00
+            </div>
+            <div id="minus" class="minus_time">
+               -<span id="minuto">00</span>:<span id="seco">00</span>
+            </div>
+        </div>
+        <hr>
+        <div id="work">
+        </div>
+        <div id="message" class="hide">
+            MESSAGE GOES HERE
+        </div>
+    </div>
+</body>
+
+</html>
