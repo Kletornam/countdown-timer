@@ -48,7 +48,7 @@ function startTime() {
 
   s = checkTime(s);
 
-  var ampm = h >= 12 ? 'pm' : 'am'
+  var ampm = h >= 12 ? '' : 'am'
 
   document.getElementById("work").innerHTML = h + ":" + m  + ampm;
 
