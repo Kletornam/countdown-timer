@@ -1,79 +1,111 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Discovery Timer</title>
     <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body id="body">
+    <main class="card" aria-label="Countdown timer card">
+      <div class="content">
+        <div class="top">
+          <div class="title">
+            <h1>Countdown Timer</h1>
+            <p>Set time, then start.</p>
+          </div>
+
+          <div class="pill" title="Dark mode minimalist UI">
+            <span class="dot" aria-hidden="true"></span>
+            <span>Ready</span>
+          </div>
+        </div>
+
+        <section class="main">
+          <!-- Controls -->
+          <div class="panel" id="men">
+            <div class="panel-title">Set timer</div>
+
+            <div class="inputs">
+              <label class="field">
+                <span class="label">Hours</span>
+                <input
+                  id="hours"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  step="1"
+                  value="0"
+                />
+              </label>
+
+              <label class="field">
+                <span class="label">Minutes</span>
+                <input
+                  id="minutes"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  step="1"
+                  value="0"
+                />
+              </label>
+
+              <label class="field">
+                <span class="label">Seconds</span>
+                <input
+                  id="seconds"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  step="1"
+                  value="0"
+                />
+              </label>
+            </div>
+
+            <div class="buttons">
+              <button
+                id="startBtn"
+                class="btn btn-primary"
+                type="button"
+              >
+                Start
+              </button>
+              <button id="resetBtn" class="btn btn-ghost" type="button">
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Timer display -->
+          <div class="timerWrap">
+            <div class="timerCard">
+              <div class="timerTop">
+                <div class="timerLabel">Time remaining</div>
+                <div id="stateBadge" class="badge badge-idle">Idle</div>
+              </div>
+
+              <div class="time" aria-live="polite">
+                <span id="hh">00</span>
+                <span class="sep" aria-hidden="true">:</span>
+                <span id="mm">00</span>
+                <span class="sep" aria-hidden="true">:</span>
+                <span id="ss">00</span>
+              </div>
+
+              <div class="fineprint">
+                <span class="spark"></span>
+                <span id="hint2">Timer will count down to zero.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    
     <script type="text/javascript" src="index.js" async></script>
-</head>
-
-<body id="body">
-    <div id="main">
-        <div id="top">
-            <span>
-                <a class="text-3xl underline" style="color: rgb(56, 255, 162); text-decoration: none;"href="index.html">RESET </a>
-                ||
-                <a style="color: rgb(56, 255, 162); text-decoration: none;" id="resetBtn" href="#" onclick="showHide()">
-                    SHOW CLOCK
-                </a>
-                ||
-                <!-- <input type="textarea" id="words" onchange="displayMsg()" placeholder="Enter a message here" value=""> -->
-                <textarea name="message" id="words" cols="30" rows="1" onchange="displayMsg()"
-                    placeholder="Enter a message here"></textarea>
-                    ||
-                    <a style="color: rgb(56, 255, 162); text-decoration: none;" id="reset_Btn"
-                        onclick="showHideTop()">
-                        CLOCK ONLY
-                    </a>
-                    ||
-                    <a style="color: rgb(56, 255, 162); text-decoration: none;" id="reset_minus"
-                        onclick="showMinus()">
-                        SHOW MINUS
-                    </a>
-                    ||
-                    <a style="color: rgb(56, 255, 162); text-decoration: none;" id="hide_menu">
-                        HIDE
-                    </a>
-                    
-            </span>
-        </div>
-
-        <div id="menu">Menu</div>
-
-        <div id="sop">
-
-            <div id="countdown">
-                <form>
-                    <p><u>SET THE TIMER</u></p>
-                    <label for="minutes"> Minutes:</label>
-                    <input id="minute" placeholder="Enter number of minutes" value="00" /><br>
-                    <br>
-                    <label for="seconds">Seconds:</label>
-                    <input id="second" placeholder="Enter number of Seconds" value="0" /><br><br>
-                </form>
-
-                <button onclick="countDown()">Start</button>
-
-                <button id="showBtn" onclick="showHide()">Show Clock</button>
-            </div>
-
-            <div id="down">
-                00:00
-            </div>
-            <div id="minus" class="minus_time">
-               -<span id="minuto">00</span>:<span id="seco">00</span>
-            </div>
-        </div>
-        <hr>
-        <div id="work">
-        </div>
-        <div id="message" class="hide">
-            MESSAGE GOES HERE
-        </div>
-    </div>
-</body>
-
+  </body>
 </html>
