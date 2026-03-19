@@ -15,20 +15,11 @@
           <div class="title">
             <h1>Countdown Timer</h1>
             <p>Set time, then start.</p>
+            <div id="stateBadge" class="badge badge-idle">Idle</div>
           </div>
 
-          <div class="pill" title="Dark mode minimalist UI">
-            <span class="dot" aria-hidden="true"></span>
-            <span>Ready</span>
-          </div>
-        </div>
-
-        <section class="main">
-          <!-- Controls -->
-          <div class="panel" id="men">
-            <div class="panel-title">Set timer</div>
-
-            <div class="inputs">
+          <div class="panel">
+                        <div class="inputs">
               <label class="field">
                 <span class="label">Hours</span>
                 <input
@@ -65,9 +56,13 @@
                 />
               </label>
             </div>
+          </div>
 
-            <div class="buttons">
-              <button
+          <div class="pill" title="Dark mode minimalist UI">
+            <!-- <span class="dot" aria-hidden="true"></span>
+            <span>Ready</span> -->
+            
+            <button
                 id="startBtn"
                 class="btn btn-primary"
                 type="button"
@@ -77,15 +72,14 @@
               <button id="resetBtn" class="btn btn-ghost" type="button">
                 Reset
               </button>
-            </div>
-          </div>
+        </div>
+        </div>
 
+        <section class="main">
           <!-- Timer display -->
           <div class="timerWrap">
             <div class="timerCard">
               <div class="timerTop">
-                <div class="timerLabel">Time remaining</div>
-                <div id="stateBadge" class="badge badge-idle">Idle</div>
               </div>
 
               <div class="time" aria-live="polite">
@@ -94,11 +88,6 @@
                 <span id="mm">00</span>
                 <span class="sep" aria-hidden="true">:</span>
                 <span id="ss">00</span>
-              </div>
-
-              <div class="fineprint">
-                <span class="spark"></span>
-                <span id="hint2">Timer will count down to zero.</span>
               </div>
             </div>
           </div>

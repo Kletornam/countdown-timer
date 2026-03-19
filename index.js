@@ -158,7 +158,7 @@
 
   // ===== Core countdown =====
   function readInputsToSeconds() {
-    const h = clampInt(hoursEl.value, 0, 999);
+    const h = clampInt(hoursEl.value, 0, 24);
     const m = clampInt(minutesEl.value, 0, 59);
     const s = clampInt(secondsEl.value, 0, 59);
     return h * 3600 + m * 60 + s;
