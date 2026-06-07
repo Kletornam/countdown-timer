@@ -1,79 +1,286 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" class="h-full scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discovery Timer</title>
-    <link rel="stylesheet" href="style.css" />
-    <script type="text/javascript" src="index.js" async></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StageTimer PRO - Church Event Timer System</title>
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
 </head>
+<body class="h-full select-none flex flex-col transition-colors duration-500">
 
-<body id="body">
-    <div id="main">
-        <div id="top">
-            <span>
-                <a class="text-3xl underline" style="color: rgb(56, 255, 162); text-decoration: none;"href="index.html">RESET </a>
-                ||
-                <a style="color: rgb(56, 255, 162); text-decoration: none;" id="resetBtn" href="#" onclick="showHide()">
-                    SHOW CLOCK
-                </a>
-                ||
-                <!-- <input type="textarea" id="words" onchange="displayMsg()" placeholder="Enter a message here" value=""> -->
-                <textarea name="message" id="words" cols="30" rows="1" onchange="displayMsg()"
-                    placeholder="Enter a message here"></textarea>
-                    ||
-                    <a style="color: rgb(56, 255, 162); text-decoration: none;" id="reset_Btn"
-                        onclick="showHideTop()">
-                        CLOCK ONLY
-                    </a>
-                    ||
-                    <a style="color: rgb(56, 255, 162); text-decoration: none;" id="reset_minus"
-                        onclick="showMinus()">
-                        SHOW MINUS
-                    </a>
-                    ||
-                    <a style="color: rgb(56, 255, 162); text-decoration: none;" id="hide_menu">
-                        HIDE
-                    </a>
-                    
-            </span>
-        </div>
-
-        <div id="menu">Menu</div>
-
-        <div id="sop">
-
-            <div id="countdown">
-                <form>
-                    <p><u>SET THE TIMER</u></p>
-                    <label for="minutes"> Minutes:</label>
-                    <input id="minute" placeholder="Enter number of minutes" value="00" /><br>
-                    <br>
-                    <label for="seconds">Seconds:</label>
-                    <input id="second" placeholder="Enter number of Seconds" value="0" /><br><br>
-                </form>
-
-                <button onclick="countDown()">Start</button>
-
-                <button id="showBtn" onclick="showHide()">Show Clock</button>
-            </div>
-
-            <div id="down">
-                00:00
-            </div>
-            <div id="minus" class="minus_time">
-               -<span id="minuto">00</span>:<span id="seco">00</span>
-            </div>
-        </div>
-        <hr>
-        <div id="work">
-        </div>
-        <div id="message" class="hide">
-            MESSAGE GOES HERE
-        </div>
+  <!-- 1. HEADER (Hidden in Stage-Only Mode) -->
+  <header id="app-header" class="stage-only-transition flex justify-between items-center px-6 py-4 border-b border-zinc-800/80 bg-zinc-950/70 backdrop-blur-md z-30">
+    <div class="flex items-center gap-3">
+      <div class="h-8 w-8 rounded-lg bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-black font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+          StageTimer <span class="text-xs bg-zinc-800 text-zinc-400 font-semibold px-2 py-0.5 rounded-full border border-zinc-700/50">PRO</span>
+        </h1>
+        <p class="text-[10px] text-zinc-500">Auditorium & Stage Timing Console</p>
+      </div>
     </div>
-</body>
 
+    <!-- Active Timer Status Banner -->
+    <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel border-zinc-800 text-xs font-semibold text-emerald-400">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      <span id="status-text">Timer Ready</span>
+    </div>
+  </header>
+
+  <!-- 2. MAIN APPLICATION CONTENT -->
+  <main class="flex-1 flex flex-col lg:flex-row relative overflow-hidden h-full">
+    
+    <!-- LEFT SIDEBAR: CONTROLS & PREFERENCES (Hidden in Stage-Only Mode) -->
+    <section id="app-controls" class="stage-only-transition w-full lg:w-[420px] shrink-0 border-r border-zinc-900/60 bg-zinc-950/45 p-6 flex flex-col gap-6 overflow-y-auto z-20">
+      
+      <!-- Preset Time Selections -->
+      <div class="flex flex-col gap-2.5">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-500">Session Presets</h3>
+          <button id="btn-add-preset-toggle" class="text-[10px] font-bold text-emerald-400 hover:text-emerald-300 transition-all flex items-center gap-1 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+            </svg>
+            Add Preset
+          </button>
+        </div>
+
+        <!-- Add Custom Preset Form (Hidden by default, slides open) -->
+        <div id="add-preset-form" class="hidden glass-panel p-4 rounded-xl border-zinc-800/80 flex flex-col gap-3 transition-all duration-300 text-xs">
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold uppercase text-zinc-500">Preset Name</label>
+            <input type="text" id="preset-name-input" placeholder="e.g., Youth Message" class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-200 focus:outline-none focus:border-emerald-500">
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold uppercase text-zinc-500 text-center">Hours</label>
+              <input type="number" id="preset-h-input" min="0" max="99" value="0" class="time-input-spinner w-full text-center py-1 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-200 focus:outline-none focus:border-emerald-500">
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold uppercase text-zinc-500 text-center">Mins</label>
+              <input type="number" id="preset-m-input" min="0" max="59" value="10" class="time-input-spinner w-full text-center py-1 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-200 focus:outline-none focus:border-emerald-500">
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold uppercase text-zinc-500 text-center">Secs</label>
+              <input type="number" id="preset-s-input" min="0" max="59" value="0" class="time-input-spinner w-full text-center py-1 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-200 focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+          <div class="flex gap-2 mt-1">
+            <button id="btn-save-preset" class="flex-1 py-1.5 bg-emerald-500 text-black font-bold rounded-lg hover:bg-emerald-400 transition-all cursor-pointer">Save</button>
+            <button id="btn-cancel-preset" class="flex-1 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold rounded-lg hover:bg-zinc-800 transition-all cursor-pointer">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Presets Grid Container -->
+        <div id="presets-grid" class="grid grid-cols-2 gap-2">
+          <!-- Rendered dynamically via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Time Input Controls -->
+      <div class="flex flex-col gap-2.5">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-500">Custom Duration</h3>
+        <div class="glass-panel p-4 rounded-xl border-zinc-800/80 flex flex-col gap-3">
+          <!-- Hours, Minutes, Seconds selectors -->
+          <div class="grid grid-cols-3 gap-3">
+            <div class="flex flex-col gap-1 items-center">
+              <label class="text-[10px] uppercase font-bold text-zinc-500">Hours</label>
+              <input type="number" id="input-h" min="0" max="99" value="0" class="time-input-spinner w-full text-center py-2 bg-zinc-900/80 border border-zinc-800 rounded-lg text-lg font-bold text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+            </div>
+            <div class="flex flex-col gap-1 items-center">
+              <label class="text-[10px] uppercase font-bold text-zinc-500">Minutes</label>
+              <input type="number" id="input-m" min="0" max="59" value="30" class="time-input-spinner w-full text-center py-2 bg-zinc-900/80 border border-zinc-800 rounded-lg text-lg font-bold text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+            </div>
+            <div class="flex flex-col gap-1 items-center">
+              <label class="text-[10px] uppercase font-bold text-zinc-500">Seconds</label>
+              <input type="number" id="input-s" min="0" max="59" value="0" class="time-input-spinner w-full text-center py-2 bg-zinc-900/80 border border-zinc-800 rounded-lg text-lg font-bold text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+            </div>
+          </div>
+          <!-- Quick Modify Buttons (While Running/Stopped) -->
+          <div class="grid grid-cols-4 gap-1.5 mt-1 text-center">
+            <button id="add-10m" class="px-2 py-1.5 text-[10px] font-bold rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all">+10m</button>
+            <button id="add-1m" class="px-2 py-1.5 text-[10px] font-bold rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all">+1m</button>
+            <button id="sub-1m" class="px-2 py-1.5 text-[10px] font-bold rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all">-1m</button>
+            <button id="sub-10m" class="px-2 py-1.5 text-[10px] font-bold rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all">-10m</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Playback Controls -->
+      <div class="flex flex-col gap-2.5">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-500">Control Deck</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Start Button -->
+          <button id="btn-start" class="col-span-2 py-3 px-4 rounded-xl font-bold bg-emerald-500 text-black shadow-lg shadow-emerald-500/10 hover:bg-emerald-400 hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer z-10">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+            </svg>
+            Start Countdown
+          </button>
+          <!-- Pause Button -->
+          <button id="btn-pause" class="py-3 px-4 rounded-xl font-bold border border-zinc-800 bg-zinc-900/60 text-zinc-200 hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            Pause
+          </button>
+          <!-- Reset Button -->
+          <button id="btn-reset" class="py-3 px-4 rounded-xl font-bold border border-zinc-800 bg-zinc-900/60 text-zinc-200 hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+            </svg>
+            Reset
+          </button>
+          <!-- Clear Button -->
+          <button id="btn-clear" class="col-span-2 py-2 px-4 rounded-lg text-xs font-semibold border border-dashed border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900/30 text-zinc-400 hover:text-zinc-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+            Clear Active Timer
+          </button>
+        </div>
+      </div>
+
+      <!-- Settings & Customization Preferences -->
+      <div class="flex flex-col gap-2.5 mt-auto">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+          </svg>
+          Stage Customization
+        </h3>
+        <div class="glass-panel p-4 rounded-xl border-zinc-800/80 flex flex-col gap-4">
+          
+          <!-- Theme Presets -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-bold text-zinc-400 uppercase">Stage Themes</label>
+            <select id="theme-select" class="w-full text-xs font-semibold py-2 px-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-300 focus:outline-none focus:border-emerald-500">
+              <option value="neon-forest">Emerald & Rose (Neon Forest)</option>
+              <option value="ocean-breeze">Cyan & Orange (Ocean Breeze)</option>
+              <option value="sunny-warning">Amber & Vivid Red (Sunny Stage)</option>
+              <option value="classic-monochrome">White & Amber (Classic Monochrome)</option>
+              <option value="custom">Custom Color Configuration</option>
+            </select>
+          </div>
+
+          <!-- Color Pickers (Visible when custom or default) -->
+          <div id="custom-colors-container" class="grid grid-cols-2 gap-3 transition-opacity duration-300">
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-zinc-400 uppercase">Standard Color</label>
+              <div class="flex items-center gap-2 p-1.5 bg-zinc-900 border border-zinc-800 rounded-lg">
+                <input type="color" id="color-safe-input" value="#10b981" class="w-6 h-6 rounded border-0 cursor-pointer bg-transparent">
+                <span id="color-safe-lbl" class="text-[10px] font-semibold text-zinc-300 font-mono">#10b981</span>
+              </div>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] font-bold text-zinc-400 uppercase">Alert Color (20%)</label>
+              <div class="flex items-center gap-2 p-1.5 bg-zinc-900 border border-zinc-800 rounded-lg">
+                <input type="color" id="color-alert-input" value="#f43f5e" class="w-6 h-6 rounded border-0 cursor-pointer bg-transparent">
+                <span id="color-alert-lbl" class="text-[10px] font-semibold text-zinc-300 font-mono">#f43f5e</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Threshold Percentage Selector -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between items-center text-[10px] font-bold text-zinc-400 uppercase">
+              <span>Alert Threshold</span>
+              <span id="threshold-val" class="font-mono text-emerald-400">35%</span>
+            </div>
+            <input type="range" id="threshold-input" min="5" max="50" step="5" value="35" class="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+          </div>
+
+          <!-- Chimes & Seconds Toggle checkboxes -->
+          <div class="flex flex-col gap-2 mt-1 pt-1 border-t border-zinc-900">
+            <label class="flex items-center justify-between cursor-pointer group text-xs text-zinc-400 font-medium">
+              <span class="group-hover:text-zinc-200 transition-all">Play Bell Audio Alerts</span>
+              <input type="checkbox" id="toggle-sound" checked class="sr-only peer">
+              <div class="relative w-8 h-4.5 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-zinc-400 peer-checked:after:bg-black after:border-zinc-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-500"></div>
+            </label>
+
+            <label class="flex items-center justify-between cursor-pointer group text-xs text-zinc-400 font-medium">
+              <span class="group-hover:text-zinc-200 transition-all">Display Seconds</span>
+              <input type="checkbox" id="toggle-seconds" checked class="sr-only peer">
+              <div class="relative w-8 h-4.5 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-zinc-400 peer-checked:after:bg-black after:border-zinc-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-500"></div>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT MAIN PANELS: THE CLOCK VIEWPORT -->
+    <section id="timer-viewport" class="flex-1 flex flex-col justify-center items-center bg-black/95 relative p-4 lg:p-12 transition-all duration-300">
+      
+      <!-- BACKGROUND AMBIENT GRADIENT DECAL (Stage depth effect) -->
+      <div class="absolute inset-0 bg-radial-gradient from-zinc-900/10 to-transparent pointer-events-none z-0"></div>
+
+      <!-- FLOAT STAGE COMMAND BUTTONS (Top Right over display) -->
+      <div class="absolute top-6 right-6 flex items-center gap-2.5 z-30">
+        <!-- Floating Stage Mode Button -->
+        <button id="btn-toggle-stage" class="stage-toggle-btn px-4 py-2 text-xs font-semibold rounded-lg flex items-center gap-2 cursor-pointer">
+          <span id="stage-icon-stage" class="flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+            </svg>
+            <span>Stage View (HDMI)</span>
+          </span>
+          <span id="stage-icon-exit" class="hidden flex items-center gap-1.5 text-zinc-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>Exit Stage View</span>
+          </span>
+        </button>
+
+        <!-- Floating Fullscreen Button -->
+        <button id="btn-fullscreen" class="stage-toggle-btn p-2 rounded-lg cursor-pointer" title="Toggle Fullscreen">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- MAIN CLOCK COMPONENT -->
+      <div class="w-full flex flex-col justify-center items-center select-none text-center relative z-10">
+        
+        <!-- Overhead Dynamic Title / Session Banner -->
+        <div id="display-label-container" class="text-sm font-semibold tracking-[0.25em] text-zinc-600 uppercase mb-4 transition-all duration-300">
+          <span id="display-label">Ready to Program</span>
+        </div>
+
+        <!-- THE MASSIVE DIGITAL TIMER -->
+        <div id="countdown-display" class="font-digital clock-glow leading-none select-all relative select-none font-bold tabular-nums cursor-default select-none">
+          00:30:00
+        </div>
+
+        <!-- Dynamic Warning Bar (Aesthetic bottom bar that visually matches timer state) -->
+        <div class="progress-bar-container">
+          <div id="dynamic-progress-bar" class="absolute left-0 top-0 bottom-0 w-full rounded-full transition-all duration-500" style="background-color: var(--color-current);"></div>
+        </div>
+
+
+
+        <!-- Exit Notice Hint (Only appears in Stage Mode to let speakers know they can click to configure) -->
+        <div id="exit-stage-hint" class="opacity-0 pointer-events-none mt-10 text-[10px] text-zinc-700 tracking-wider transition-opacity duration-500">
+          STAGE DISPLAY &bull; CLICK ANYWHERE OR PRESS ESC TO RETURN TO CONSOLE
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Script logic file -->
+  <script src="app.js"></script>
+</body>
 </html>
