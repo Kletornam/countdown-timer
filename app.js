@@ -15,6 +15,8 @@ let timerState = {
   alertThreshold: 0.35,        // 35% Alert warning threshold
   isSoundEnabled: true,
   isSecondsEnabled: true,
+  isHourHidden: false,
+  isCurrentTimeEnabled: false,
   overtimeMode: false,
   playedAlertChime: false,     // Prevents repeating the threshold sound
   playedZeroChime: false,      // Prevents repeating the end sound
@@ -217,6 +219,8 @@ const elStatusBadge = document.getElementById('status-badge');
 const elStatusText = document.getElementById('status-text');
 const elDisplayLabel = document.getElementById('display-label');
 const elDisplay = document.getElementById('countdown-display');
+const elCurrentTimeContainer = document.getElementById('current-time-container');
+const elCurrentTimeDisplay = document.getElementById('current-time-display');
 const elProgressBar = document.getElementById('dynamic-progress-bar');
 const elExitHint = document.getElementById('exit-stage-hint');
 
@@ -241,6 +245,8 @@ const customColorsContainer = document.getElementById('custom-colors-container')
 const thresholdInput = document.getElementById('threshold-input');
 const thresholdVal = document.getElementById('threshold-val');
 const toggleSound = document.getElementById('toggle-sound');
+const toggleHours = document.getElementById('toggle-hours');
+const toggleCurrentTime = document.getElementById('toggle-current-time');
 const toggleSeconds = document.getElementById('toggle-seconds');
 
 // Viewport buttons
@@ -489,6 +495,23 @@ function loadPreset(seconds, name = "Custom Session", isTest = false) {
  * Core rendering pipeline. Handles string formatting, dynamic colors, 
  * CSS heartbeat animations, and volume bars based on current status.
  */
+function updateCurrentTimeDisplay() {
+  if (!elCurrentTimeContainer || !elCurrentTimeDisplay) return;
+
+  if (!timerState.isCurrentTimeEnabled) {
+    elCurrentTimeContainer.classList.add('hidden');
+    return;
+  }
+
+  elCurrentTimeContainer.classList.remove('hidden');
+
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  elCurrentTimeDisplay.innerText = `${hours}:${minutes}:${seconds}`;
+}
+
 function updateDisplay() {
   let formattedTime = "";
 
@@ -502,12 +525,17 @@ function updateDisplay() {
 
     // Formatting strings
     const pad = (num) => String(num).padStart(2, '0');
+    const shouldHideHourPrefix = timerState.isHourHidden && hrs === 0;
     
     if (timerState.isSecondsEnabled) {
-      formattedTime = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+      formattedTime = shouldHideHourPrefix
+        ? `${pad(mins)}:${pad(secs)}`
+        : `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
     } else {
       // Only display Hours and Minutes (highly requested stage clean-look option)
-      formattedTime = `${pad(hrs)}:${pad(mins)}`;
+      formattedTime = shouldHideHourPrefix
+        ? `${pad(mins)}`
+        : `${pad(hrs)}:${pad(mins)}`;
     }
   }
 
@@ -631,6 +659,8 @@ function savePreferences() {
     alertThreshold: timerState.alertThreshold,
     isSoundEnabled: timerState.isSoundEnabled,
     isSecondsEnabled: timerState.isSecondsEnabled,
+    isHourHidden: timerState.isHourHidden,
+    isCurrentTimeEnabled: timerState.isCurrentTimeEnabled,
     initialDurationSeconds: timerState.initialDurationSeconds
   };
   localStorage.setItem('stagetimer_preferences', JSON.stringify(preferences));
@@ -662,6 +692,8 @@ function loadPreferences() {
     timerState.alertThreshold = prefs.alertThreshold !== undefined ? prefs.alertThreshold : 0.35;
     timerState.isSoundEnabled = prefs.isSoundEnabled !== undefined ? prefs.isSoundEnabled : true;
     timerState.isSecondsEnabled = prefs.isSecondsEnabled !== undefined ? prefs.isSecondsEnabled : true;
+    timerState.isHourHidden = prefs.isHourHidden !== undefined ? prefs.isHourHidden : false;
+    timerState.isCurrentTimeEnabled = prefs.isCurrentTimeEnabled !== undefined ? prefs.isCurrentTimeEnabled : false;
     
     if (prefs.initialDurationSeconds) {
       timerState.initialDurationSeconds = prefs.initialDurationSeconds;
@@ -679,6 +711,8 @@ function loadPreferences() {
     thresholdVal.innerText = `${Math.round(timerState.alertThreshold * 100)}%`;
     
     toggleSound.checked = timerState.isSoundEnabled;
+    toggleHours.checked = timerState.isHourHidden;
+    toggleCurrentTime.checked = timerState.isCurrentTimeEnabled;
     toggleSeconds.checked = timerState.isSecondsEnabled;
 
     // Apply custom view displays
@@ -939,6 +973,18 @@ toggleSound.addEventListener('change', (e) => {
   savePreferences();
 });
 
+toggleHours.addEventListener('change', (e) => {
+  timerState.isHourHidden = e.target.checked;
+  savePreferences();
+  updateDisplay();
+});
+
+toggleCurrentTime.addEventListener('change', (e) => {
+  timerState.isCurrentTimeEnabled = e.target.checked;
+  savePreferences();
+  updateCurrentTimeDisplay();
+});
+
 toggleSeconds.addEventListener('change', (e) => {
   timerState.isSecondsEnabled = e.target.checked;
   savePreferences();
@@ -974,6 +1020,8 @@ window.addEventListener('resize', fitClockText);
 // Set initial setup
 loadPreferences();
 updateDisplay();
+updateCurrentTimeDisplay();
 fitClockText();
+setInterval(updateCurrentTimeDisplay, 1000);
 // Secondary safety delay scaling to ensure WebFont load offsets are captured
 setTimeout(fitClockText, 600);
